@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import Clarifai from 'clarifai';
+//import Clarifai from 'clarifai';
 import ParticlesBg from 'particles-bg';
 import Navigation from './components/Navigation/Navigation';
 import Logo from './components/Logo/Logo';
@@ -16,10 +16,10 @@ const setupClarifai = (imageUrl) =>{
   const USER_ID = 'concept';       
   const APP_ID = 'my-first-application';
   // Change these to whatever model and image URL you want to use
-  const MODEL_ID = 'face-detection';   
+  //const MODEL_ID = 'face-detection';   
   const IMAGE_URL = imageUrl ;
 
- const raw = JSON.stringify({
+const raw = JSON.stringify({
     "user_app_id": {
         "user_id": USER_ID,
         "app_id": APP_ID
@@ -61,8 +61,28 @@ class App extends Component {
     super();
     this.state ={
       input: '',
-    }
+      imageUrl: '',
+      box: {},
 
+    }
+  }
+
+    calculateFaceLocation = (data) =>{
+    const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box
+    const image = document.getElementById('inputimage')
+    const width = Number(image.width);
+    const height = Number(image.height);
+   return{
+    leftcol: clarifaiFace.left_col*width,
+    topRow: clarifaiFace.top_row*height,
+    rightCol: width - (clarifaiFace.right_col * width),
+    bottomRow: height - (clarifaiFace.bottom_row *height)
+   }
+    }
+  
+
+  displayFaceBox = (box) => {
+    this.setState({box: box});
   }
 
   onInputChange = (event) =>{
@@ -113,7 +133,7 @@ class App extends Component {
       onInputChange={this.onInputChange}
        onButtonSubmit={this.onButtonsubmit}
        />
-       { <FaceRecognition imageUrl = {this.state.imageUrl}/>  }
+       { <FaceRecognition box = {this.state.box} imageUrl = {this.state.imageUrl}/>  }
     </div>
   );
 }
