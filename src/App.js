@@ -2,6 +2,7 @@ import React,{Component} from 'react';
 //import Clarifai from 'clarifai';
 import ParticlesBg from 'particles-bg';
 import Navigation from './components/Navigation/Navigation';
+import Signin from './components/Signin/Signin';
 import Logo from './components/Logo/Logo';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import Rank from './components/Rank/Rank';
@@ -17,7 +18,7 @@ const setupClarifai = (imageUrl) =>{
   const APP_ID = 'my-first-application';
   // Change these to whatever model and image URL you want to use
   //const MODEL_ID = 'face-detection';   
-  const IMAGE_URL = imageUrl ;
+  const IMAGE_URL = imageUrl;
 
 const raw = JSON.stringify({
     "user_app_id": {
@@ -27,7 +28,7 @@ const raw = JSON.stringify({
     "inputs": [
         {
             "data": {
-                "image": {
+                "image": { 
                     "url": IMAGE_URL
                 }
             }
@@ -63,6 +64,7 @@ class App extends Component {
       input: '',
       imageUrl: '',
       box: {},
+      route: 'signin'
 
     }
   }
@@ -88,6 +90,10 @@ class App extends Component {
   onInputChange = (event) =>{
     this.setState({input: event.target.value})
 
+  }
+
+  onRouteChange = () => {
+    this.setState({route: 'home'});
   }
 
 
@@ -127,14 +133,20 @@ class App extends Component {
     <div className="App">
        <ParticlesBg type="cobweb" bg={true} />
       <Navigation/>
+      {this.state.route=== 'signin'
+    ? <Signin onRouteChange= {this.onRouteChange}/>
+     :<div>
       <Logo/>
       <Rank/>
       <ImageLinkForm 
       onInputChange={this.onInputChange}
        onButtonSubmit={this.onButtonsubmit}
        />
-       { <FaceRecognition box = {this.state.box} imageUrl = {this.state.imageUrl}/>  }
+        <FaceRecognition box = {this.state.box} imageUrl = {this.state.imageUrl}/>  
+        </div>
+  }
     </div>
+  
   );
 }
 }
